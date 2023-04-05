@@ -1,8 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <dimen name="top_menu_height">70dp</dimen>
+    <dimen name="top_menu_height">100dp</dimen>
     <dimen name="button_menu_margins_horizontal">50dp</dimen>
     <dimen name="button_menu_margins_vertical">30dp</dimen>
     <dimen name="bottom_menu_height">70dp</dimen>
+    <dimen name="button_menu_width">300dp</dimen>
+    <dimen name="disclaimer_margins">16dp</dimen>
+    <dimen name="top_menu_margin">10dp</dimen>
+    <dimen name="top_menu_corner_radius">15dp</dimen>
+    <dimen name="top_menu_elevation">5dp</dimen>
 </resources>
