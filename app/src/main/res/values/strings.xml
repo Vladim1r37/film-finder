@@ -1,9 +1,8 @@
 <resources>
     <string name="app_name">Film Finder</string>
     <string name="disclaimer_text">Постеры предоставлены https://www.movieposters.com/</string>
-    <string name="btn_menu_text">Меню</string>
-    <string name="btn_favourites_text">Избранное</string>
-    <string name="btn_watch_later">Смотреть позже</string>
-    <string name="btn_selections_text">Подборки</string>
-    <string name="btn_settings">Настройки</string>
+    <string name="menu_settings_title">Настройки</string>
+    <string name="menu_favorites_title">Избранное</string>
+    <string name="menu_watch_later_title">Смотреть позже</string>
+    <string name="menu_selections_title">Подборки</string>
 </resources>
