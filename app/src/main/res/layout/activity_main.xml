@@ -93,6 +93,7 @@
         android:columnCount="2"
         android:orientation="horizontal"
         android:useDefaultMargins="true"
+        android:layoutAnimation="@anim/layout_anim"
         app:layout_constraintTop_toBottomOf="@id/disclaimer"
         app:layout_constraintBottom_toTopOf="@id/bottom_navigation"
         app:layout_constraintStart_toStartOf="parent"
