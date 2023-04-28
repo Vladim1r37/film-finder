@@ -10,4 +10,5 @@
     <dimen name="top_menu_margin">10dp</dimen>
     <dimen name="top_menu_corner_radius">15dp</dimen>
     <dimen name="top_menu_elevation">5dp</dimen>
+    <dimen name="animated_posters_margin">16dp</dimen>
 </resources>
