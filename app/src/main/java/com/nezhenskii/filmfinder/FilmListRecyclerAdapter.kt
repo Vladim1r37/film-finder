@@ -5,6 +5,7 @@ import android.view.ViewGroup
 import android.widget.AdapterView.OnItemClickListener
 import android.widget.RemoteViews.RemoteView
 import androidx.recyclerview.widget.RecyclerView
+import kotlinx.android.synthetic.main.film_item.view.*
 
 class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
@@ -18,6 +19,9 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
         when (holder) {
             is FilmViewHolder -> {
                 holder.bind(items[position])
+                holder.itemView.item_container.setOnClickListener{
+                    clickListener.click(items[position])
+                }
             }
         }
     }
@@ -31,6 +35,6 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
     }
 
     interface OnItemClickListener {
-        fun click(film: Film, position: Int)
+        fun click(film: Film)
     }
 }
