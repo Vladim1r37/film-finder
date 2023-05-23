@@ -3,6 +3,7 @@ package com.nezhenskii.filmfinder
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
@@ -58,5 +59,20 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragment_placeholder, fragment)
             .addToBackStack(null)
             .commit()
+    }
+
+    override fun onBackPressed() {
+        if (supportFragmentManager.backStackEntryCount == 1) {
+            AlertDialog.Builder(this)
+                .setTitle("Вы хотите выйти?")
+                .setPositiveButton("Да") { _, _ ->
+                    super.onBackPressed()
+                    finish()
+                }
+                .setNegativeButton("Нет") { _, _ ->
+
+                }
+                .show()
+        } else super.onBackPressed()
     }
 }
