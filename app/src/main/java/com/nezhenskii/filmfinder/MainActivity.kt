@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
+import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.LinearLayoutManager
 import kotlinx.android.synthetic.main.activity_main.*
 
@@ -41,11 +42,12 @@ class MainActivity : AppCompatActivity() {
                 }
             })
             adapter = filmsAdapter
+
             layoutManager = LinearLayoutManager(this@MainActivity)
             val decorator = TopSpacingItemDecoration(8)
             addItemDecoration(decorator)
         }
-        filmsAdapter.addItems(filmsDataBase)
+        updateFilmDataBase(filmsDataBase)
     }
 
     private fun initNavigation() {
@@ -75,5 +77,13 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
+    }
+
+    private fun updateFilmDataBase(newFilmDataBase: List<Film>) {
+        val oldFilmDataBase = filmsAdapter.getItems()
+        val filmDiff = FilmDiff(oldFilmDataBase, newFilmDataBase)
+        val diffResult = DiffUtil.calculateDiff(filmDiff)
+        filmsAdapter.addItems(newFilmDataBase)
+        diffResult.dispatchUpdatesTo(filmsAdapter)
     }
 }

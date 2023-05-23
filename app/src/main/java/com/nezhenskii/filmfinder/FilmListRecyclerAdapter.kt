@@ -31,7 +31,10 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
     fun addItems(list: List<Film>) {
         items.clear()
         items.addAll(list)
-        notifyDataSetChanged()
+    }
+
+    fun getItems(): List<Film> {
+        return items
     }
 
     interface OnItemClickListener {
