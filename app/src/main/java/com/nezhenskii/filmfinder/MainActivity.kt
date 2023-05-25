@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+    val filmsDataBase = FilmsDatabase()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -78,5 +79,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 .show()
         } else super.onBackPressed()
+    }
+
+    fun getData() : List<Film>{
+        return filmsDataBase.getData()
     }
 }

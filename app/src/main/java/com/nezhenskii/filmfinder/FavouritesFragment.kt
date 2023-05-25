@@ -22,8 +22,6 @@ class FavouritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        val favourites_list: List<Film> = emptyList()
-
         favorites_recycler.apply {
             filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener{
                 override fun click(film: Film) {
@@ -35,6 +33,6 @@ class FavouritesFragment : Fragment() {
             val decorator = TopSpacingItemDecoration(8)
             addItemDecoration(decorator)
         }
-        filmsAdapter.addItems(favourites_list)
+        filmsAdapter.addItems((activity as MainActivity).getData().filter { it.isInFavourites })
     }
 }
