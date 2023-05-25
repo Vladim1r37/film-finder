@@ -32,7 +32,11 @@ class MainActivity : AppCompatActivity() {
         bottom_navigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.favorites -> {
-                    Toast.makeText(this, "Избранное", Toast.LENGTH_SHORT).show()
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_placeholder, FavouritesFragment())
+                        .addToBackStack(null)
+                        .commit()
                     true
                 }
                 R.id.watch_later -> {
