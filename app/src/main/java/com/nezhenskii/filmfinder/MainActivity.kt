@@ -7,6 +7,7 @@ import androidx.appcompat.app.AlertDialog
 import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
+    val filmsDataBase = FilmsDatabase()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -32,7 +33,11 @@ class MainActivity : AppCompatActivity() {
         bottom_navigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.favorites -> {
-                    Toast.makeText(this, "Избранное", Toast.LENGTH_SHORT).show()
+                    supportFragmentManager
+                        .beginTransaction()
+                        .replace(R.id.fragment_placeholder, FavouritesFragment())
+                        .addToBackStack(null)
+                        .commit()
                     true
                 }
                 R.id.watch_later -> {
@@ -74,5 +79,9 @@ class MainActivity : AppCompatActivity() {
                 }
                 .show()
         } else super.onBackPressed()
+    }
+
+    fun getData() : List<Film>{
+        return filmsDataBase.getData()
     }
 }
