@@ -29,13 +29,17 @@ class HomeFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        AnimationHelper.performFragmentCircularRevealAnimation(home_fragment_root, requireActivity(), 1)
+        AnimationHelper.performFragmentCircularRevealAnimation(
+            home_fragment_root,
+            requireActivity(),
+            1
+        )
 
         initRecyclerView()
         search_view.setOnClickListener {
             search_view.isIconified = false
         }
-        search_view.setOnQueryTextListener (object : SearchView.OnQueryTextListener{
+        search_view.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
             }
@@ -46,7 +50,8 @@ class HomeFragment : Fragment() {
                     return true
                 }
                 val result = (activity as MainActivity).getData().filter {
-                    it.title.lowercase(Locale.getDefault()).contains(newText.lowercase(Locale.getDefault()))
+                    it.title.lowercase(Locale.getDefault())
+                        .contains(newText.lowercase(Locale.getDefault()))
                 }
                 filmsAdapter.addItems(result)
                 return true
@@ -56,11 +61,12 @@ class HomeFragment : Fragment() {
 
     private fun initRecyclerView() {
         main_recycler.apply {
-            filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener{
-                override fun click(film: Film) {
-                    (requireActivity() as MainActivity).launchDetailsFragment(film)
-                }
-            })
+            filmsAdapter =
+                FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
+                    override fun click(film: Film) {
+                        (requireActivity() as MainActivity).launchDetailsFragment(film)
+                    }
+                })
             adapter = filmsAdapter
 
             layoutManager = LinearLayoutManager(requireContext())
