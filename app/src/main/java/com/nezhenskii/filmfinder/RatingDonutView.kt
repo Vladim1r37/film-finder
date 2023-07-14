@@ -1,9 +1,11 @@
 package com.nezhenskii.filmfinder
 
+import android.animation.ValueAnimator
 import android.content.Context
 import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
+import android.view.animation.AccelerateDecelerateInterpolator
 
 class RatingDonutView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null) :
     View(context, attributeSet) {
@@ -23,6 +25,16 @@ class RatingDonutView @JvmOverloads constructor(context: Context, attributeSet: 
     private lateinit var strokePaint: Paint
     private lateinit var digitPaint: Paint
     private lateinit var circlePaint: Paint
+
+    //Аниматор для анимирования появления view
+    private val animator = ValueAnimator.ofFloat().apply {
+        duration = 1000
+        interpolator = AccelerateDecelerateInterpolator()
+        addUpdateListener {
+            radius = it.animatedValue as Float
+            invalidate()
+        }
+    }
 
     init {
         //Получаем атрибуты и устанавливаем их в соответствующие поля
@@ -149,5 +161,12 @@ class RatingDonutView @JvmOverloads constructor(context: Context, attributeSet: 
         initPaint()
         //вызываем перерисовку View
         invalidate()
+    }
+
+    fun runCircleAnimation() {
+        with(animator) {
+            setFloatValues(0f, radius)
+            start()
+        }
     }
 }
