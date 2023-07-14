@@ -2,24 +2,24 @@ package com.nezhenskii.filmfinder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.AdapterView.OnItemClickListener
-import android.widget.RemoteViews.RemoteView
 import androidx.recyclerview.widget.RecyclerView
-import kotlinx.android.synthetic.main.film_item.view.*
+import com.nezhenskii.filmfinder.databinding.FilmItemBinding
 
 class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
+    private lateinit var binding: FilmItemBinding
     private val items = mutableListOf<Film>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        return FilmViewHolder(LayoutInflater.from(parent.context).inflate(R.layout.film_item, parent, false))
+        binding = FilmItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return FilmViewHolder(binding)
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {
         when (holder) {
             is FilmViewHolder -> {
                 holder.bind(items[position])
-                holder.itemView.item_container.setOnClickListener{
+                holder.itemView.rootView.setOnClickListener{
                     clickListener.click(items[position])
                 }
             }

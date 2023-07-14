@@ -6,40 +6,42 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.fragment_details.*
+import com.nezhenskii.filmfinder.databinding.FragmentDetailsBinding
 
 class DetailsFragment : Fragment() {
+    private lateinit var binding: FragmentDetailsBinding
     lateinit var film: Film
 
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_details, container, false)
+    ): View {
+        binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         film = arguments?.get("film") as Film
-        details_toolbar.title = film.title
-        details_poster.setImageResource(film.poster)
-        details_description.text = film.description
-        details_fab_favourites.setImageResource(
+        binding.detailsToolbar.title = film.title
+        binding.detailsPoster.setImageResource(film.poster)
+        binding.detailsDescription.text = film.description
+        binding.detailsFabFavourites.setImageResource(
             if (film.isInFavourites) R.drawable.ic_round_favorite_24
         else R.drawable.ic_round_favorite_border
         )
-        details_fab_favourites.setOnClickListener {
+        binding.detailsFabFavourites.setOnClickListener {
             if (!film.isInFavourites) {
-                details_fab_favourites.setImageResource(R.drawable.ic_round_favorite_24)
+                binding.detailsFabFavourites.setImageResource(R.drawable.ic_round_favorite_24)
                 film.isInFavourites = true
             } else {
-                details_fab_favourites.setImageResource(R.drawable.ic_round_favorite_border)
+                binding.detailsFabFavourites.setImageResource(R.drawable.ic_round_favorite_border)
                 film.isInFavourites = false
             }
 
         }
-        details_fab_share.setOnClickListener {
+        binding.detailsFabShare.setOnClickListener {
             val intent = Intent()
             intent.action = Intent.ACTION_SEND
             intent.putExtra(

@@ -5,14 +5,18 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.activity_main.*
+import com.nezhenskii.filmfinder.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
+    private lateinit var binding: ActivityMainBinding
     val filmsDataBase = FilmsDatabase()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        //Инициализируем объект
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        //Передаем его в метод
+        setContentView(binding.root)
         initNavigation()
         supportFragmentManager
             .beginTransaction()
@@ -22,7 +26,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initNavigation() {
-        topAppBar.setOnMenuItemClickListener {
+        binding.topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.settings -> {
                     Toast.makeText(this, "Настройки", Toast.LENGTH_SHORT).show()
@@ -31,7 +35,7 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-        bottom_navigation.setOnItemSelectedListener {
+        binding.bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.home -> {
                     val tag = "home"
@@ -86,6 +90,7 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 1) {
             AlertDialog.Builder(this)
