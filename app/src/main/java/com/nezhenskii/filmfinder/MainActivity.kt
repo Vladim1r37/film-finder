@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.nezhenskii.filmfinder.databinding.ActivityMainBinding
 
@@ -13,11 +14,11 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        //Инициализируем объект
-        binding = ActivityMainBinding.inflate(layoutInflater)
-        //Передаем его в метод
-        setContentView(binding.root)
+        //Задаём корневое представление для активити
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
         initNavigation()
+
         supportFragmentManager
             .beginTransaction()
             .add(R.id.fragment_placeholder, HomeFragment())

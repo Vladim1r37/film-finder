@@ -5,7 +5,7 @@ import com.bumptech.glide.Glide
 import com.nezhenskii.filmfinder.databinding.FilmItemBinding
 
 
-class FilmViewHolder(private val binding: FilmItemBinding) : RecyclerView.ViewHolder(binding.root) {
+class FilmViewHolder(private var binding: FilmItemBinding) : RecyclerView.ViewHolder(binding.root) {
 
     //В этом методе кладем данные из film в наши view
     fun bind(film: Film) {
