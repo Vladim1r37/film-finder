@@ -9,13 +9,15 @@ import com.nezhenskii.filmfinder.databinding.FragmentWatchLaterBinding
 
 
 class WatchLaterFragment : Fragment() {
-    private lateinit var binding: FragmentWatchLaterBinding
+    private var _binding: FragmentWatchLaterBinding? = null
+    private val binding: FragmentWatchLaterBinding
+        get() = _binding!!
+
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
-        binding = FragmentWatchLaterBinding.inflate(inflater, container, false)
+        _binding = FragmentWatchLaterBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -23,5 +25,10 @@ class WatchLaterFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         AnimationHelper.performFragmentCircularRevealAnimation(binding.root, requireActivity(), 3)
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }

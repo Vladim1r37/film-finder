@@ -2,16 +2,15 @@ package com.nezhenskii.filmfinder
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.RecyclerView
+import com.nezhenskii.filmfinder.databinding.FilmItemBinding
 
 class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
     RecyclerView.Adapter<RecyclerView.ViewHolder>() {
     private val items = mutableListOf<Film>()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): RecyclerView.ViewHolder {
-        val context = LayoutInflater.from(parent.context)
-        return FilmViewHolder(DataBindingUtil.inflate(context,  R.layout.film_item, parent, false))
+        return FilmViewHolder(FilmItemBinding.inflate(LayoutInflater.from(parent.context), parent, false))
     }
 
     override fun onBindViewHolder(holder: RecyclerView.ViewHolder, position: Int) {

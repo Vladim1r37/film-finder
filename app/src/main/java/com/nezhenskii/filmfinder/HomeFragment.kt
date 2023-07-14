@@ -13,7 +13,9 @@ import java.util.*
 
 
 class HomeFragment : Fragment() {
-    private lateinit var binding: FragmentHomeBinding
+    private var _binding: FragmentHomeBinding? = null
+    private val binding: FragmentHomeBinding
+        get() = _binding!!
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -24,7 +26,7 @@ class HomeFragment : Fragment() {
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentHomeBinding.inflate(inflater, container, false)
+        _binding = FragmentHomeBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -83,5 +85,10 @@ class HomeFragment : Fragment() {
         val diffResult = DiffUtil.calculateDiff(filmDiff)
         filmsAdapter.addItems(newFilmDataBase)
         diffResult.dispatchUpdatesTo(filmsAdapter)
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }

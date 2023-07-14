@@ -9,7 +9,10 @@ import androidx.fragment.app.Fragment
 import com.nezhenskii.filmfinder.databinding.FragmentDetailsBinding
 
 class DetailsFragment : Fragment() {
-    private lateinit var binding: FragmentDetailsBinding
+    private var _binding: FragmentDetailsBinding? = null
+    private val binding: FragmentDetailsBinding
+    get() = _binding!!
+
     lateinit var film: Film
 
     override fun onCreateView(
@@ -17,7 +20,7 @@ class DetailsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentDetailsBinding.inflate(inflater, container, false)
+        _binding = FragmentDetailsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -51,5 +54,10 @@ class DetailsFragment : Fragment() {
             intent.type = "text/plain"
             startActivity(Intent.createChooser(intent, "Share To:"))
         }
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }

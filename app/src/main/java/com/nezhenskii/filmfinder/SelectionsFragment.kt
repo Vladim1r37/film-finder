@@ -8,14 +8,15 @@ import android.view.ViewGroup
 import com.nezhenskii.filmfinder.databinding.FragmentSelectionsBinding
 
 class SelectionsFragment : Fragment() {
-    private lateinit var binding: FragmentSelectionsBinding
+    private var _binding: FragmentSelectionsBinding? = null
+    private val binding: FragmentSelectionsBinding
+        get() = _binding!!
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        // Inflate the layout for this fragment
-        binding = FragmentSelectionsBinding.inflate(inflater, container, false)
+        _binding = FragmentSelectionsBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -23,5 +24,10 @@ class SelectionsFragment : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         AnimationHelper.performFragmentCircularRevealAnimation(binding.root, requireActivity(), 4)
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }

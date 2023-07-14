@@ -9,7 +9,10 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.nezhenskii.filmfinder.databinding.FragmentFavouritesBinding
 
 class FavoritesFragment : Fragment() {
-    private lateinit var binding: FragmentFavouritesBinding
+    private var _binding: FragmentFavouritesBinding? = null
+    private val binding: FragmentFavouritesBinding
+    get() = _binding!!
+
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
 
     override fun onCreateView(
@@ -17,7 +20,7 @@ class FavoritesFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        binding = FragmentFavouritesBinding.inflate(inflater, container, false)
+        _binding = FragmentFavouritesBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -38,5 +41,10 @@ class FavoritesFragment : Fragment() {
             addItemDecoration(decorator)
         }
         filmsAdapter.addItems((activity as MainActivity).getData().filter { it.isInFavourites })
+    }
+
+    override fun onDestroy() {
+        _binding = null
+        super.onDestroy()
     }
 }

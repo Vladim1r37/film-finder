@@ -10,7 +10,7 @@ import com.nezhenskii.filmfinder.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    val filmsDataBase = FilmsDatabase()
+    private val filmsDataBase = FilmsDatabase()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
