@@ -1,4 +1,4 @@
-package com.nezhenskii.filmfinder
+package com.nezhenskii.filmfinder.view.fragments
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -6,9 +6,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
-import androidx.recyclerview.widget.DiffUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.nezhenskii.filmfinder.view.rv_adapters.FilmListRecyclerAdapter
+import com.nezhenskii.filmfinder.view.MainActivity
+import com.nezhenskii.filmfinder.view.rv_adapters.TopSpacingItemDecoration
 import com.nezhenskii.filmfinder.databinding.FragmentHomeBinding
+import com.nezhenskii.filmfinder.domain.Film
+import com.nezhenskii.filmfinder.utils.AnimationHelper
+import com.nezhenskii.filmfinder.viewmodel.HomeFragmentViewModel
 import java.util.*
 
 
@@ -17,6 +23,15 @@ class HomeFragment : Fragment() {
     private val binding: FragmentHomeBinding
         get() = _binding!!
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
+    private val viewmodel by lazy {
+        ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java)
+    }
+    private var filmsDatabase = listOf<Film>()
+    set(value) {
+        if (field == value) return
+        field = value
+        filmsAdapter.addItems(field)
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -49,10 +64,10 @@ class HomeFragment : Fragment() {
 
             override fun onQueryTextChange(newText: String): Boolean {
                 if (newText.isEmpty()) {
-                    filmsAdapter.addItems((activity as MainActivity).getData())
+                    filmsAdapter.addItems(filmsDatabase)
                     return true
                 }
-                val result = (activity as MainActivity).getData().filter {
+                val result = filmsDatabase.filter {
                     it.title.lowercase(Locale.getDefault())
                         .contains(newText.lowercase(Locale.getDefault()))
                 }
@@ -60,6 +75,9 @@ class HomeFragment : Fragment() {
                 return true
             }
         })
+        viewmodel.filmsListLiveData.observe(viewLifecycleOwner) {
+            filmsDatabase = it
+        }
     }
 
     private fun initRecyclerView() {
@@ -76,15 +94,6 @@ class HomeFragment : Fragment() {
             val decorator = TopSpacingItemDecoration(8)
             addItemDecoration(decorator)
         }
-        updateFilmDataBase((activity as MainActivity).getData())
-    }
-
-    private fun updateFilmDataBase(newFilmDataBase: List<Film>) {
-        val oldFilmDataBase = filmsAdapter.getItems()
-        val filmDiff = FilmDiff(oldFilmDataBase, newFilmDataBase)
-        val diffResult = DiffUtil.calculateDiff(filmDiff)
-        filmsAdapter.addItems(newFilmDataBase)
-        diffResult.dispatchUpdatesTo(filmsAdapter)
     }
 
     override fun onDestroy() {

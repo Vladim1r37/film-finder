@@ -1,4 +1,4 @@
-package com.nezhenskii.filmfinder
+package com.nezhenskii.filmfinder.view.customviews
 
 import android.animation.ValueAnimator
 import android.content.Context
@@ -6,6 +6,7 @@ import android.graphics.*
 import android.util.AttributeSet
 import android.view.View
 import android.view.animation.AccelerateDecelerateInterpolator
+import com.nezhenskii.filmfinder.R
 
 class RatingDonutView @JvmOverloads constructor(context: Context, attributeSet: AttributeSet? = null) :
     View(context, attributeSet) {

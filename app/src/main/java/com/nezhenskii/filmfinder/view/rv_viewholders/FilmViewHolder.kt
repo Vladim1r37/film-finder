@@ -1,8 +1,9 @@
-package com.nezhenskii.filmfinder
+package com.nezhenskii.filmfinder.view.rv_viewholders
 
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.nezhenskii.filmfinder.databinding.FilmItemBinding
+import com.nezhenskii.filmfinder.domain.Film
 
 
 class FilmViewHolder(private val binding: FilmItemBinding) : RecyclerView.ViewHolder(binding.root) {

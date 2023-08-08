@@ -1,4 +1,4 @@
-package com.nezhenskii.filmfinder
+package com.nezhenskii.filmfinder.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -6,11 +6,13 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import com.nezhenskii.filmfinder.R
 import com.nezhenskii.filmfinder.databinding.ActivityMainBinding
+import com.nezhenskii.filmfinder.domain.Film
+import com.nezhenskii.filmfinder.view.fragments.*
 
 class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
-    private val filmsDataBase = FilmsDatabase()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -105,9 +107,5 @@ class MainActivity : AppCompatActivity() {
                 }
                 .show()
         } else super.onBackPressed()
-    }
-
-    fun getData() : List<Film>{
-        return filmsDataBase.getData()
     }
 }

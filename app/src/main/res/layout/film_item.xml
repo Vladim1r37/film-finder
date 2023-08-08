@@ -12,7 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="150dp">
 
-        <com.nezhenskii.filmfinder.RatingDonutView
+        <com.nezhenskii.filmfinder.view.customviews.RatingDonutView
             android:id="@+id/rating_donut"
             android:layout_width="50dp"
             android:layout_height="50dp"

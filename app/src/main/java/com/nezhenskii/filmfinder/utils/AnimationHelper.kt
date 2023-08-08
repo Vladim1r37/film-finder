@@ -1,4 +1,4 @@
-package com.nezhenskii.filmfinder
+package com.nezhenskii.filmfinder.utils
 
 import android.app.Activity
 import android.view.View
