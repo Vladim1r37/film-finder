@@ -7,7 +7,7 @@
     android:id="@+id/selections_fragment_root"
     android:visibility="invisible"
     tools:visibility="visible"
-    tools:context=".SelectionsFragment">
+    tools:context=".view.fragments.SelectionsFragment">
 
 
 </FrameLayout>

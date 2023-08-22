@@ -1,19 +1,26 @@
-package com.nezhenskii.filmfinder
+package com.nezhenskii.filmfinder.view
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import kotlinx.android.synthetic.main.activity_main.*
+import com.nezhenskii.filmfinder.R
+import com.nezhenskii.filmfinder.databinding.ActivityMainBinding
+import com.nezhenskii.filmfinder.domain.Film
+import com.nezhenskii.filmfinder.view.fragments.*
 
 class MainActivity : AppCompatActivity() {
-    val filmsDataBase = FilmsDatabase()
+    private lateinit var binding: ActivityMainBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        //Задаём корневое представление для активити
+        binding = DataBindingUtil.setContentView(this, R.layout.activity_main)
+
         initNavigation()
+
         supportFragmentManager
             .beginTransaction()
             .add(R.id.fragment_placeholder, HomeFragment())
@@ -22,7 +29,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initNavigation() {
-        topAppBar.setOnMenuItemClickListener {
+        binding.topAppBar.setOnMenuItemClickListener {
             when (it.itemId) {
                 R.id.settings -> {
                     Toast.makeText(this, "Настройки", Toast.LENGTH_SHORT).show()
@@ -31,7 +38,7 @@ class MainActivity : AppCompatActivity() {
                 else -> false
             }
         }
-        bottom_navigation.setOnItemSelectedListener {
+        binding.bottomNavigation.setOnItemSelectedListener {
             when (it.itemId) {
                 R.id.home -> {
                     val tag = "home"
@@ -86,6 +93,7 @@ class MainActivity : AppCompatActivity() {
             .commit()
     }
 
+    @Deprecated("Deprecated in Java")
     override fun onBackPressed() {
         if (supportFragmentManager.backStackEntryCount == 1) {
             AlertDialog.Builder(this)
@@ -99,9 +107,5 @@ class MainActivity : AppCompatActivity() {
                 }
                 .show()
         } else super.onBackPressed()
-    }
-
-    fun getData() : List<Film>{
-        return filmsDataBase.getData()
     }
 }

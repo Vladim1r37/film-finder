@@ -1,4 +1,4 @@
-package com.nezhenskii.filmfinder
+package com.nezhenskii.filmfinder.view.rv_adapters
 
 import android.content.res.Resources
 import android.graphics.Rect
