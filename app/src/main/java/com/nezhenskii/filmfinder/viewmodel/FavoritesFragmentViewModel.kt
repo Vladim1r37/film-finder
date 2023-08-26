@@ -7,11 +7,7 @@ import com.nezhenskii.filmfinder.domain.Film
 import com.nezhenskii.filmfinder.domain.Interactor
 
 class FavoritesFragmentViewModel : ViewModel() {
-    val filmsListLiveData:  MutableLiveData<List<Film>> = MutableLiveData()
     private  var interactor: Interactor = App.instance.interactor
+    val filmsListLiveData:  MutableLiveData<List<Film>> = interactor.repo.filmsDatabase
 
-    init {
-        val films = interactor.getFilmsDB()
-        filmsListLiveData.postValue(films)
-    }
 }
