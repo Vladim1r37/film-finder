@@ -8,6 +8,7 @@ import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.nezhenskii.filmfinder.view.rv_adapters.FilmListRecyclerAdapter
 import com.nezhenskii.filmfinder.view.MainActivity
 import com.nezhenskii.filmfinder.view.rv_adapters.TopSpacingItemDecoration
@@ -32,6 +33,8 @@ class HomeFragment : Fragment() {
         field = value
         filmsAdapter.addItems(field)
     }
+
+    var isLoading = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -77,6 +80,7 @@ class HomeFragment : Fragment() {
         })
         viewmodel.filmsListLiveData.observe(viewLifecycleOwner) {
             filmsDatabase = it
+            isLoading = false
         }
     }
 
@@ -93,7 +97,30 @@ class HomeFragment : Fragment() {
             layoutManager = LinearLayoutManager(requireContext())
             val decorator = TopSpacingItemDecoration(8)
             addItemDecoration(decorator)
+
+            addOnScrollListener(object : RecyclerView.OnScrollListener() {
+                override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
+                    val layoutManager = recyclerView.layoutManager as RecyclerView.LayoutManager
+                    //сколько элементов на экране
+                    val visibleItemCount: Int = layoutManager.childCount
+                    //сколько всего элементов
+                    val totalItemCount: Int = layoutManager.itemCount
+                    //какая позиция первого элемента
+                    val firstVisibleItem = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    //смещение для более плавной прокрутки
+                    val offset = 3
+                    //проверяем, идет загрузка или нет
+                    if (!isLoading) {
+                        if (visibleItemCount + firstVisibleItem + offset >= totalItemCount) {
+                            //ставим флаг, что запрашиваем загрузку элементов
+                            isLoading = true
+                            viewmodel.getNextPage()
+                        }
+                    }
+                }
+            })
         }
+
     }
 
     override fun onDestroy() {
