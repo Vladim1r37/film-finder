@@ -5,13 +5,16 @@ import androidx.lifecycle.ViewModel
 import com.nezhenskii.filmfinder.App
 import com.nezhenskii.filmfinder.domain.Film
 import com.nezhenskii.filmfinder.domain.Interactor
+import javax.inject.Inject
 
 class HomeFragmentViewModel : ViewModel() {
     val filmsListLiveData:  MutableLiveData<List<Film>> = MutableLiveData()
-    private  var interactor: Interactor = App.instance.interactor
+    @Inject
+    lateinit var interactor: Interactor
     var page = 1
 
     init {
+        App.instance.dagger.inject(this)
         interactor.repo.filmsDatabase = filmsListLiveData
         interactor.getFilmsFromApi(page, object : ApiCallback {
             override fun onSuccess(films: List<Film>) {

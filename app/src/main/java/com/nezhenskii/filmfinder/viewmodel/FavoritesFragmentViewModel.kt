@@ -5,9 +5,16 @@ import androidx.lifecycle.ViewModel
 import com.nezhenskii.filmfinder.App
 import com.nezhenskii.filmfinder.domain.Film
 import com.nezhenskii.filmfinder.domain.Interactor
+import javax.inject.Inject
 
 class FavoritesFragmentViewModel : ViewModel() {
-    private  var interactor: Interactor = App.instance.interactor
-    val filmsListLiveData:  MutableLiveData<List<Film>> = interactor.repo.filmsDatabase
+    val filmsListLiveData:  MutableLiveData<List<Film>>
+    @Inject
+    lateinit  var interactor: Interactor
+
+    init {
+        App.instance.dagger.inject(this)
+        filmsListLiveData = interactor.repo.filmsDatabase
+    }
 
 }
