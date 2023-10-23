@@ -1,5 +1,6 @@
 package com.nezhenskii.filmfinder.domain
 
+import android.content.SharedPreferences.OnSharedPreferenceChangeListener
 import com.nezhenskii.filmfinder.data.API
 import com.nezhenskii.filmfinder.data.MainRepository
 import com.nezhenskii.filmfinder.data.PreferenceProvider
@@ -34,7 +35,10 @@ private val preferences: PreferenceProvider) {
     }
 
     fun getDefaultCategoryFromPreferences() = preferences.getDefaultCategory()
+
     fun saveDefaultCategoryToPreferences(category: String) {
         preferences.saveDefaultCategory(category)
     }
+
+    fun registerListener(listener: OnSharedPreferenceChangeListener) = preferences.setListener(listener)
 }

@@ -28,8 +28,14 @@ class PreferenceProvider(context: Context) {
         preference.edit { putString(KEY_DEFAULT_CATEGORY, category) }
     }
 
+    //Забираем категорию
     fun getDefaultCategory(): String {
         return preference.getString(KEY_DEFAULT_CATEGORY, DEFAULT_CATEGORY) ?: DEFAULT_CATEGORY
+    }
+
+    //Подключаем listener
+    fun setListener(listener: SharedPreferences.OnSharedPreferenceChangeListener) {
+        preference.registerOnSharedPreferenceChangeListener(listener)
     }
 
     //Ключи для настроек

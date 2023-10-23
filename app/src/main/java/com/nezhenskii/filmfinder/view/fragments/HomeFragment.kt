@@ -59,21 +59,24 @@ class HomeFragment : Fragment() {
         initSearchView()
         initPullToRefresh()
         initRecyclerView()
+        initPreferencesListener()
         viewmodel.filmsListLiveData.observe(viewLifecycleOwner) {
             filmsDatabase = it
-            filmsAdapter.addItems(it)
             isLoading = false
+        }
+    }
+
+    private fun initPreferencesListener() {
+        viewmodel.interactor.registerListener { _, _ ->
+            viewmodel.page = 1
+            //Делаем новый запрос фильмов на сервер
+            viewmodel.getFilms()
         }
     }
 
     private fun initPullToRefresh() {
         //Вешаем слушатель, чтобы вызвался pull to refresh
         binding.pullToRefresh.setOnRefreshListener {
-            //Чистим адаптер
-            filmsAdapter.clearItems()
-            viewmodel.page = 1
-            //Делаем новый запрос фильмов на сервер
-            viewmodel.getFilms()
             //Убираем крутящееся колечко
             binding.pullToRefresh.isRefreshing = false
         }

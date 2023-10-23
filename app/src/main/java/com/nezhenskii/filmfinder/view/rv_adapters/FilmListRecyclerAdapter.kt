@@ -31,13 +31,13 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
     override fun getItemCount() = items.size
 
     fun addItems(list: List<Film>) {
-//        val oldFilmDataBase = getItems()
-//        val filmDiff = FilmDiff(oldFilmDataBase, list)
-//        val diffResult = DiffUtil.calculateDiff(filmDiff)
+        val oldFilmDataBase = getItems()
+        val filmDiff = FilmDiff(oldFilmDataBase, list)
+        val diffResult = DiffUtil.calculateDiff(filmDiff)
         items.clear()
         items.addAll(list)
-        notifyDataSetChanged()
-//        diffResult.dispatchUpdatesTo(this)
+//        notifyDataSetChanged()
+        diffResult.dispatchUpdatesTo(this)
 
     }
 
@@ -45,9 +45,9 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
         return items
     }
 
-    fun clearItems() {
-        items.clear()
-    }
+//    fun clearItems() {
+//        items.clear()
+//    }
 
     interface OnItemClickListener {
         fun click(film: Film)
