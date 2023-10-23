@@ -56,7 +56,30 @@ class HomeFragment : Fragment() {
             1
         )
 
+        initSearchView()
+        initPullToRefresh()
         initRecyclerView()
+        viewmodel.filmsListLiveData.observe(viewLifecycleOwner) {
+            filmsDatabase = it
+            filmsAdapter.addItems(it)
+            isLoading = false
+        }
+    }
+
+    private fun initPullToRefresh() {
+        //Вешаем слушатель, чтобы вызвался pull to refresh
+        binding.pullToRefresh.setOnRefreshListener {
+            //Чистим адаптер
+            filmsAdapter.clearItems()
+            viewmodel.page = 1
+            //Делаем новый запрос фильмов на сервер
+            viewmodel.getFilms()
+            //Убираем крутящееся колечко
+            binding.pullToRefresh.isRefreshing = false
+        }
+    }
+
+    private fun initSearchView() {
         binding.searchView.setOnClickListener {
             binding.searchView.isIconified = false
         }
@@ -78,10 +101,6 @@ class HomeFragment : Fragment() {
                 return true
             }
         })
-        viewmodel.filmsListLiveData.observe(viewLifecycleOwner) {
-            filmsDatabase = it
-            isLoading = false
-        }
     }
 
     private fun initRecyclerView() {
