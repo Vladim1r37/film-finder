@@ -49,6 +49,8 @@ class HomeFragmentViewModel : ViewModel() {
         })
     }
 
+    fun clearDb() = interactor.clearDb()
+
     interface ApiCallback {
         fun onSuccess(films: List<Film>)
         fun onFailure()

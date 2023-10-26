@@ -45,4 +45,9 @@ class MainRepository(databaseHelper: DatabaseHelper) {
         }
         return result
     }
+
+    fun clearAllFromDb() {
+        //Удаляем все строки в таблице
+        sqlDb.delete(DatabaseHelper.TABLE_NAME, null, null)
+    }
 }

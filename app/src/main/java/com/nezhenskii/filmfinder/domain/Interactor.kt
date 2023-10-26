@@ -41,6 +41,8 @@ private val preferences: PreferenceProvider) {
 
     fun getFilmsFromDb(): List<Film> = repo.getAllFromDb()
 
+    fun clearDb() = repo.clearAllFromDb()
+
     fun getDefaultCategoryFromPreferences() = preferences.getDefaultCategory()
 
     fun saveDefaultCategoryToPreferences(category: String) {

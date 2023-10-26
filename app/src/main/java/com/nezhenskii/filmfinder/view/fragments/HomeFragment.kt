@@ -68,6 +68,9 @@ class HomeFragment : Fragment() {
 
     private fun initPreferencesListener() {
         viewmodel.interactor.registerListener { _, _ ->
+            //Очищаем базу данных
+            viewmodel.clearDb()
+            //Возвращаемся на первую страницу
             viewmodel.page = 1
             //Делаем новый запрос фильмов на сервер
             viewmodel.getFilms()
