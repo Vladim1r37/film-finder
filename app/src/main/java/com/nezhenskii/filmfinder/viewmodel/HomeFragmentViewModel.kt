@@ -8,14 +8,19 @@ import com.nezhenskii.filmfinder.domain.Interactor
 import javax.inject.Inject
 
 class HomeFragmentViewModel : ViewModel() {
-    val filmsListLiveData:  MutableLiveData<List<Film>> = MutableLiveData()
+    val filmsListLiveData: MutableLiveData<List<Film>> = MutableLiveData()
+
     @Inject
     lateinit var interactor: Interactor
     var page = 1
 
     init {
         App.instance.dagger.inject(this)
+        getFilms()
         interactor.repo.filmsDatabase = filmsListLiveData
+    }
+
+    fun getFilms() {
         interactor.getFilmsFromApi(page, object : ApiCallback {
             override fun onSuccess(films: List<Film>) {
                 filmsListLiveData.postValue(films)
@@ -23,6 +28,7 @@ class HomeFragmentViewModel : ViewModel() {
             }
 
             override fun onFailure() {
+                filmsListLiveData.postValue(interactor.getFilmsFromDb())
             }
 
         })
@@ -42,6 +48,8 @@ class HomeFragmentViewModel : ViewModel() {
 
         })
     }
+
+    fun clearDb() = interactor.clearDb()
 
     interface ApiCallback {
         fun onSuccess(films: List<Film>)

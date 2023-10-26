@@ -3,6 +3,9 @@ package com.nezhenskii.filmfinder
 import android.app.Application
 import com.nezhenskii.filmfinder.di.AppComponent
 import com.nezhenskii.filmfinder.di.DaggerAppComponent
+import com.nezhenskii.filmfinder.di.modules.DatabaseModule
+import com.nezhenskii.filmfinder.di.modules.DomainModule
+import com.nezhenskii.filmfinder.di.modules.RemoteModule
 
 class App : Application() {
     lateinit var dagger: AppComponent
@@ -12,7 +15,11 @@ class App : Application() {
         //Инициализируем экземпляр App
         instance = this
         //Создаем компонент
-        dagger = DaggerAppComponent.create()
+        dagger = DaggerAppComponent.builder()
+            .remoteModule(RemoteModule())
+            .databaseModule(DatabaseModule())
+            .domainModule(DomainModule(this))
+            .build()
     }
 
     companion object {

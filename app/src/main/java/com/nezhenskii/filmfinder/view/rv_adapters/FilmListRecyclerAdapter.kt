@@ -36,6 +36,7 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
         val diffResult = DiffUtil.calculateDiff(filmDiff)
         items.clear()
         items.addAll(list)
+//        notifyDataSetChanged()
         diffResult.dispatchUpdatesTo(this)
 
     }
@@ -43,6 +44,10 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
     fun getItems(): List<Film> {
         return items
     }
+
+//    fun clearItems() {
+//        items.clear()
+//    }
 
     interface OnItemClickListener {
         fun click(film: Film)
