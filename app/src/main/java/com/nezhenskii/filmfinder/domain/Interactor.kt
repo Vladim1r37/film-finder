@@ -23,8 +23,13 @@ private val preferences: PreferenceProvider) {
         retrofitService.getFilms(getDefaultCategoryFromPreferences(), API.KEY, "ru-RU", page).
         enqueue(object : Callback<TmdbResultsDto> {
             override fun onResponse(call: Call<TmdbResultsDto>, response: Response<TmdbResultsDto>) {
-                //При успехе мы вызываем метод передаем onSuccess и в этот коллбэк список фильмов
-                callback.onSuccess(Converter.convertApiListToDtoList(response.body()?.tmdbFilms))
+                //При успехе мы вызываем метод, передаем onSuccess и в этот коллбэк список фильмов
+                val list = Converter.convertApiListToDtoList(response.body()?.tmdbFilms)
+                //Кладем фильмы в БД
+                list.forEach{
+                    repo.putToDb(film = it)
+                }
+                callback.onSuccess(list)
             }
 
             override fun onFailure(call: Call<TmdbResultsDto>, t: Throwable) {
@@ -33,6 +38,8 @@ private val preferences: PreferenceProvider) {
             }
         })
     }
+
+    fun getFilmsFromDb(): List<Film> = repo.getAllFromDb()
 
     fun getDefaultCategoryFromPreferences() = preferences.getDefaultCategory()
 
