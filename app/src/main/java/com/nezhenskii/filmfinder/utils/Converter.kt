@@ -1,7 +1,7 @@
 package com.nezhenskii.filmfinder.utils
 
 import com.nezhenskii.filmfinder.data.entity.TmdbFilm
-import com.nezhenskii.filmfinder.domain.Film
+import com.nezhenskii.filmfinder.data.entity.Film
 
 object Converter {
     fun convertApiListToDtoList(list: List<TmdbFilm>?): List<Film> {

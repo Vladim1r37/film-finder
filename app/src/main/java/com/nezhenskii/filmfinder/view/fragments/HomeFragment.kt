@@ -13,7 +13,7 @@ import com.nezhenskii.filmfinder.view.rv_adapters.FilmListRecyclerAdapter
 import com.nezhenskii.filmfinder.view.MainActivity
 import com.nezhenskii.filmfinder.view.rv_adapters.TopSpacingItemDecoration
 import com.nezhenskii.filmfinder.databinding.FragmentHomeBinding
-import com.nezhenskii.filmfinder.domain.Film
+import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.utils.AnimationHelper
 import com.nezhenskii.filmfinder.viewmodel.HomeFragmentViewModel
 import java.util.*

@@ -5,6 +5,7 @@ import com.nezhenskii.filmfinder.data.API
 import com.nezhenskii.filmfinder.data.MainRepository
 import com.nezhenskii.filmfinder.data.PreferenceProvider
 import com.nezhenskii.filmfinder.data.TmdbApi
+import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.data.entity.TmdbResultsDto
 import com.nezhenskii.filmfinder.utils.Converter
 import com.nezhenskii.filmfinder.viewmodel.HomeFragmentViewModel
@@ -26,9 +27,7 @@ private val preferences: PreferenceProvider) {
                 //При успехе мы вызываем метод, передаем onSuccess и в этот коллбэк список фильмов
                 val list = Converter.convertApiListToDtoList(response.body()?.tmdbFilms)
                 //Кладем фильмы в БД
-                list.forEach{
-                    repo.putToDb(film = it)
-                }
+                repo.putToDb(list)
                 callback.onSuccess(list)
             }
 

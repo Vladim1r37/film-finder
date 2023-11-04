@@ -1,7 +1,7 @@
 package com.nezhenskii.filmfinder.utils
 
 import androidx.recyclerview.widget.DiffUtil
-import com.nezhenskii.filmfinder.domain.Film
+import com.nezhenskii.filmfinder.data.entity.Film
 
 class FilmDiff(val oldList: List<Film>, val newList: List<Film>) : DiffUtil.Callback() {
     override fun getOldListSize(): Int {
