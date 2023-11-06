@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -64,6 +65,9 @@ class HomeFragment : Fragment() {
             filmsDatabase = it
             isLoading = false
         }
+        viewmodel.showProgressBar.observe(viewLifecycleOwner) {
+            binding.progressBar.isVisible = it
+        }
     }
 
     private fun initPreferencesListener() {
@@ -72,6 +76,8 @@ class HomeFragment : Fragment() {
             viewmodel.clearDb()
             //Возвращаемся на первую страницу
             viewmodel.page = 1
+            //ставим флаг, что запрашиваем загрузку элементов
+            isLoading = true
             //Делаем новый запрос фильмов на сервер
             viewmodel.getFilms()
         }
@@ -150,6 +156,7 @@ class HomeFragment : Fragment() {
 
     override fun onDestroy() {
         _binding = null
+        viewmodel.clearDb()
         super.onDestroy()
     }
 }

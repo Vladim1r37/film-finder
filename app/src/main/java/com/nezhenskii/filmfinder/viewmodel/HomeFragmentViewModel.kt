@@ -1,15 +1,16 @@
 package com.nezhenskii.filmfinder.viewmodel
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import com.nezhenskii.filmfinder.App
 import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.domain.Interactor
-import java.util.concurrent.Executors
 import javax.inject.Inject
 
 class HomeFragmentViewModel : ViewModel() {
-    val filmsListLiveData: MutableLiveData<List<Film>> = MutableLiveData()
+    val filmsListLiveData: LiveData<List<Film>>
+    val showProgressBar: MutableLiveData<Boolean> = MutableLiveData()
 
     @Inject
     lateinit var interactor: Interactor
@@ -17,21 +18,21 @@ class HomeFragmentViewModel : ViewModel() {
 
     init {
         App.instance.dagger.inject(this)
+        filmsListLiveData = interactor.getFilmsFromDb()
         getFilms()
         interactor.repo.filmsDatabase = filmsListLiveData
     }
 
     fun getFilms() {
+        showProgressBar.postValue(true)
         interactor.getFilmsFromApi(page, object : ApiCallback {
-            override fun onSuccess(films: List<Film>) {
-                filmsListLiveData.postValue(films)
+            override fun onSuccess() {
+                showProgressBar.postValue(false)
                 page++
             }
 
             override fun onFailure() {
-                Executors.newSingleThreadExecutor().execute {
-                    filmsListLiveData.postValue(interactor.getFilmsFromDb())
-                }
+                showProgressBar.postValue(false)
             }
 
         })
@@ -39,10 +40,7 @@ class HomeFragmentViewModel : ViewModel() {
 
     fun getNextPage() {
         interactor.getFilmsFromApi(page, object : ApiCallback {
-            override fun onSuccess(films: List<Film>) {
-                val list = filmsListLiveData.value?.toMutableList()
-                list?.addAll(films)
-                filmsListLiveData.postValue(list)
+            override fun onSuccess() {
                 page++
             }
 
@@ -55,7 +53,7 @@ class HomeFragmentViewModel : ViewModel() {
     fun clearDb() = interactor.clearDb()
 
     interface ApiCallback {
-        fun onSuccess(films: List<Film>)
+        fun onSuccess()
         fun onFailure()
     }
 }

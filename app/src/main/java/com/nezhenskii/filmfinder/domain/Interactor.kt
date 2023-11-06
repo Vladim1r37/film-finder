@@ -1,6 +1,7 @@
 package com.nezhenskii.filmfinder.domain
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import androidx.lifecycle.LiveData
 import com.nezhenskii.filmfinder.data.API
 import com.nezhenskii.filmfinder.data.MainRepository
 import com.nezhenskii.filmfinder.data.PreferenceProvider
@@ -28,7 +29,7 @@ private val preferences: PreferenceProvider) {
                 val list = Converter.convertApiListToDtoList(response.body()?.tmdbFilms)
                 //Кладем фильмы в БД
                 repo.putToDb(list)
-                callback.onSuccess(list)
+                callback.onSuccess()
             }
 
             override fun onFailure(call: Call<TmdbResultsDto>, t: Throwable) {
@@ -38,7 +39,7 @@ private val preferences: PreferenceProvider) {
         })
     }
 
-    fun getFilmsFromDb(): List<Film> = repo.getAllFromDb()
+    fun getFilmsFromDb(): LiveData<List<Film>> = repo.getAllFromDb()
 
     fun clearDb() = repo.clearAllFromDb()
 
