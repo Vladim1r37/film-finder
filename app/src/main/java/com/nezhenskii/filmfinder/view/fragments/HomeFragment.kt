@@ -5,6 +5,7 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
@@ -68,18 +69,23 @@ class HomeFragment : Fragment() {
         viewmodel.showProgressBar.observe(viewLifecycleOwner) {
             binding.progressBar.isVisible = it
         }
+        viewmodel.errorEvent.observe(viewLifecycleOwner) {
+            Toast.makeText(activity, it, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initPreferencesListener() {
         viewmodel.interactor.registerListener { _, _ ->
-            //Очищаем базу данных
-            viewmodel.clearDb()
-            //Возвращаемся на первую страницу
-            viewmodel.page = 1
-            //ставим флаг, что запрашиваем загрузку элементов
-            isLoading = true
-            //Делаем новый запрос фильмов на сервер
-            viewmodel.getFilms()
+            if (!isLoading) {
+                //Очищаем базу данных
+                viewmodel.clearDb()
+                //Возвращаемся на первую страницу
+                viewmodel.page = 1
+                //ставим флаг, что запрашиваем загрузку элементов
+                isLoading = true
+                //Делаем новый запрос фильмов на сервер
+                viewmodel.getFilms()
+            }
         }
     }
 
@@ -126,7 +132,7 @@ class HomeFragment : Fragment() {
             adapter = filmsAdapter
 
             layoutManager = LinearLayoutManager(requireContext())
-            val decorator = TopSpacingItemDecoration(8)
+            val decorator = TopSpacingItemDecoration(6)
             addItemDecoration(decorator)
 
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -145,7 +151,7 @@ class HomeFragment : Fragment() {
                         if (visibleItemCount + firstVisibleItem + offset >= totalItemCount) {
                             //ставим флаг, что запрашиваем загрузку элементов
                             isLoading = true
-                            viewmodel.getNextPage()
+                            viewmodel.getFilms()
                         }
                     }
                 }
@@ -156,7 +162,6 @@ class HomeFragment : Fragment() {
 
     override fun onDestroy() {
         _binding = null
-        viewmodel.clearDb()
         super.onDestroy()
     }
 }

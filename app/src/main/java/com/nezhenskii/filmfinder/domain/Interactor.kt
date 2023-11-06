@@ -49,5 +49,17 @@ private val preferences: PreferenceProvider) {
         preferences.saveDefaultCategory(category)
     }
 
+    fun getLastCallTime() = preferences.getLastCallTime()
+
+    fun saveLastCallTime(lastTime: Long) {
+        preferences.saveLastCallTime(lastTime)
+    }
+
+    fun saveCurrentPage(page: Int) {
+        preferences.saveCurrentPage(page)
+    }
+
+    fun getCurrentPage() = preferences.getCurrentPage()
+
     fun registerListener(listener: OnSharedPreferenceChangeListener) = preferences.setListener(listener)
 }
