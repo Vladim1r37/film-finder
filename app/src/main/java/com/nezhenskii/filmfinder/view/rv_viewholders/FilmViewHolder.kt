@@ -4,7 +4,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.nezhenskii.filmfinder.data.ApiConstants
 import com.nezhenskii.filmfinder.databinding.FilmItemBinding
-import com.nezhenskii.filmfinder.domain.Film
+import com.nezhenskii.filmfinder.data.entity.Film
 
 
 class FilmViewHolder(private val binding: FilmItemBinding) : RecyclerView.ViewHolder(binding.root) {

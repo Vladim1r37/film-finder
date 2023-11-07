@@ -5,7 +5,9 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.appcompat.widget.SearchView
+import androidx.core.view.isVisible
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -13,7 +15,7 @@ import com.nezhenskii.filmfinder.view.rv_adapters.FilmListRecyclerAdapter
 import com.nezhenskii.filmfinder.view.MainActivity
 import com.nezhenskii.filmfinder.view.rv_adapters.TopSpacingItemDecoration
 import com.nezhenskii.filmfinder.databinding.FragmentHomeBinding
-import com.nezhenskii.filmfinder.domain.Film
+import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.utils.AnimationHelper
 import com.nezhenskii.filmfinder.viewmodel.HomeFragmentViewModel
 import java.util.*
@@ -64,16 +66,26 @@ class HomeFragment : Fragment() {
             filmsDatabase = it
             isLoading = false
         }
+        viewmodel.showProgressBar.observe(viewLifecycleOwner) {
+            binding.progressBar.isVisible = it
+        }
+        viewmodel.errorEvent.observe(viewLifecycleOwner) {
+            Toast.makeText(activity, it, Toast.LENGTH_SHORT).show()
+        }
     }
 
     private fun initPreferencesListener() {
         viewmodel.interactor.registerListener { _, _ ->
-            //Очищаем базу данных
-            viewmodel.clearDb()
-            //Возвращаемся на первую страницу
-            viewmodel.page = 1
-            //Делаем новый запрос фильмов на сервер
-            viewmodel.getFilms()
+            if (!isLoading) {
+                //Очищаем базу данных
+                viewmodel.clearDb()
+                //Возвращаемся на первую страницу
+                viewmodel.page = 1
+                //ставим флаг, что запрашиваем загрузку элементов
+                isLoading = true
+                //Делаем новый запрос фильмов на сервер
+                viewmodel.getFilms()
+            }
         }
     }
 
@@ -120,7 +132,7 @@ class HomeFragment : Fragment() {
             adapter = filmsAdapter
 
             layoutManager = LinearLayoutManager(requireContext())
-            val decorator = TopSpacingItemDecoration(8)
+            val decorator = TopSpacingItemDecoration(6)
             addItemDecoration(decorator)
 
             addOnScrollListener(object : RecyclerView.OnScrollListener() {
@@ -139,7 +151,7 @@ class HomeFragment : Fragment() {
                         if (visibleItemCount + firstVisibleItem + offset >= totalItemCount) {
                             //ставим флаг, что запрашиваем загрузку элементов
                             isLoading = true
-                            viewmodel.getNextPage()
+                            viewmodel.getFilms()
                         }
                     }
                 }

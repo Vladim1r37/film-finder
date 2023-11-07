@@ -1,10 +1,12 @@
 package com.nezhenskii.filmfinder.domain
 
 import android.content.SharedPreferences.OnSharedPreferenceChangeListener
+import androidx.lifecycle.LiveData
 import com.nezhenskii.filmfinder.data.API
 import com.nezhenskii.filmfinder.data.MainRepository
 import com.nezhenskii.filmfinder.data.PreferenceProvider
 import com.nezhenskii.filmfinder.data.TmdbApi
+import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.data.entity.TmdbResultsDto
 import com.nezhenskii.filmfinder.utils.Converter
 import com.nezhenskii.filmfinder.viewmodel.HomeFragmentViewModel
@@ -26,10 +28,8 @@ private val preferences: PreferenceProvider) {
                 //При успехе мы вызываем метод, передаем onSuccess и в этот коллбэк список фильмов
                 val list = Converter.convertApiListToDtoList(response.body()?.tmdbFilms)
                 //Кладем фильмы в БД
-                list.forEach{
-                    repo.putToDb(film = it)
-                }
-                callback.onSuccess(list)
+                repo.putToDb(list)
+                callback.onSuccess()
             }
 
             override fun onFailure(call: Call<TmdbResultsDto>, t: Throwable) {
@@ -39,7 +39,7 @@ private val preferences: PreferenceProvider) {
         })
     }
 
-    fun getFilmsFromDb(): List<Film> = repo.getAllFromDb()
+    fun getFilmsFromDb(): LiveData<List<Film>> = repo.getAllFromDb()
 
     fun clearDb() = repo.clearAllFromDb()
 
@@ -48,6 +48,18 @@ private val preferences: PreferenceProvider) {
     fun saveDefaultCategoryToPreferences(category: String) {
         preferences.saveDefaultCategory(category)
     }
+
+    fun getLastCallTime() = preferences.getLastCallTime()
+
+    fun saveLastCallTime(lastTime: Long) {
+        preferences.saveLastCallTime(lastTime)
+    }
+
+    fun saveCurrentPage(page: Int) {
+        preferences.saveCurrentPage(page)
+    }
+
+    fun getCurrentPage() = preferences.getCurrentPage()
 
     fun registerListener(listener: OnSharedPreferenceChangeListener) = preferences.setListener(listener)
 }

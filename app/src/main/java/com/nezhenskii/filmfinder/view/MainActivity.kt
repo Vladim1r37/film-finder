@@ -8,7 +8,7 @@ import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.nezhenskii.filmfinder.R
 import com.nezhenskii.filmfinder.databinding.ActivityMainBinding
-import com.nezhenskii.filmfinder.domain.Film
+import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.view.fragments.*
 
 class MainActivity : AppCompatActivity() {

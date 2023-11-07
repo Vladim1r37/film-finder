@@ -10,7 +10,7 @@ import com.bumptech.glide.Glide
 import com.nezhenskii.filmfinder.R
 import com.nezhenskii.filmfinder.data.ApiConstants
 import com.nezhenskii.filmfinder.databinding.FragmentDetailsBinding
-import com.nezhenskii.filmfinder.domain.Film
+import com.nezhenskii.filmfinder.data.entity.Film
 
 class DetailsFragment : Fragment() {
     private var _binding: FragmentDetailsBinding? = null

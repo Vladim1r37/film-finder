@@ -6,7 +6,7 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import com.nezhenskii.filmfinder.view.rv_viewholders.FilmViewHolder
 import com.nezhenskii.filmfinder.databinding.FilmItemBinding
-import com.nezhenskii.filmfinder.domain.Film
+import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.utils.FilmDiff
 
 class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :

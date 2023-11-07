@@ -5,7 +5,6 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import com.nezhenskii.filmfinder.R
 import com.nezhenskii.filmfinder.databinding.FragmentSettingsBinding
@@ -23,7 +22,7 @@ class SettingsFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = FragmentSettingsBinding.inflate(layoutInflater, container, false)
         return binding.root
     }
@@ -33,16 +32,16 @@ class SettingsFragment : Fragment() {
         //Подключаем анимации и передаем номер позиции у кнопки в нижнем меню
         AnimationHelper.performFragmentCircularRevealAnimation(binding.root, requireActivity(), 5)
         //Слушаем, какой у нас сейчас выбран вариант в настройках
-        viewModel.categoryPropertyLiveData.observe(viewLifecycleOwner, Observer<String> {
-            when(it) {
+        viewModel.categoryPropertyLiveData.observe(viewLifecycleOwner) {
+            when (it) {
                 POPULAR_CATEGORY -> binding.radioGroup.check(R.id.radio_popular)
                 TOP_RATED_CATEGORY -> binding.radioGroup.check(R.id.radio_top_rated)
                 UPCOMING_CATEGORY -> binding.radioGroup.check(R.id.radio_upcoming)
                 NOW_PLAYING_CATEGORY -> binding.radioGroup.check(R.id.radio_now_playing)
             }
-        })
+        }
         //Слушатель для отправки нового состояния в настройки
-        binding.radioGroup.setOnCheckedChangeListener { group, checkedId ->
+        binding.radioGroup.setOnCheckedChangeListener { _, checkedId ->
             when(checkedId) {
                 R.id.radio_popular -> viewModel.putCategoryProperty(POPULAR_CATEGORY)
                 R.id.radio_top_rated -> viewModel.putCategoryProperty(TOP_RATED_CATEGORY)
