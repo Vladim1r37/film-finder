@@ -55,7 +55,7 @@ class DetailsFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        film = arguments?.get("film") as Film
+        film = arguments?.getParcelable("film")!!
         binding.detailsToolbar.title = film.title
         Glide.with(this)
             .load(ApiConstants.IMAGES_URL + "w780" + film.poster)
@@ -74,6 +74,7 @@ class DetailsFragment : Fragment() {
                 binding.detailsFabFavourites.setImageResource(R.drawable.ic_round_favorite_border)
                 film.isInFavourites = false
             }
+            viewmodel.updateFilm(film)
 
         }
         binding.detailsFabShare.setOnClickListener {

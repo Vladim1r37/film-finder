@@ -3,21 +3,22 @@ package com.nezhenskii.filmfinder.viewmodel
 import android.util.Log
 import androidx.annotation.MainThread
 import androidx.lifecycle.LifecycleOwner
-import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModel
 import com.nezhenskii.filmfinder.App
 import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.domain.Interactor
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 class HomeFragmentViewModel : ViewModel() {
-    val filmsListLiveData: LiveData<List<Film>>
-    val showProgressBar: MutableLiveData<Boolean> = MutableLiveData()
+    val filmsListData: Flow<List<Film>>
+    val showProgressBar: Channel<Boolean>
     val errorEvent = SingleLiveEvent<String>()
-    var lastCallTime: Long
+    private var lastCallTime: Long
     var page = 1
     private val timeout = 600_000 // in milliseconds
 
@@ -26,29 +27,26 @@ class HomeFragmentViewModel : ViewModel() {
 
     init {
         App.instance.dagger.inject(this)
-        filmsListLiveData = interactor.getFilmsFromDb()
+        filmsListData = interactor.getFilmsFromDb()
         lastCallTime = interactor.getLastCallTime()
         page = interactor.getCurrentPage()
+        showProgressBar = interactor.progressBarState
+        //Пятиминутная задержка между запросами в сеть, если данные были недавно кэшированы
         if (System.currentTimeMillis() - lastCallTime > timeout) {
             interactor.saveLastCallTime(System.currentTimeMillis())
             getFilms()
         }
-        interactor.repo.filmsDatabase = filmsListLiveData
     }
 
     fun getFilms() {
         interactor.saveLastCallTime(System.currentTimeMillis())
-        showProgressBar.postValue(true)
         interactor.getFilmsFromApi(page, object : ApiCallback {
             override fun onSuccess() {
-                showProgressBar.postValue(false)
                 page++
                 interactor.saveCurrentPage(page)
-
             }
 
             override fun onFailure() {
-                showProgressBar.postValue(false)
                 errorEvent.postValue("Ошибка получения данных от сервера")
             }
 

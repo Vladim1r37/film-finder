@@ -14,6 +14,11 @@ import com.nezhenskii.filmfinder.databinding.FragmentFavouritesBinding
 import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.utils.AnimationHelper
 import com.nezhenskii.filmfinder.viewmodel.FavoritesFragmentViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 
 class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavouritesBinding? = null
@@ -21,6 +26,7 @@ class FavoritesFragment : Fragment() {
     get() = _binding!!
 
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
+    private lateinit var scope: CoroutineScope
 
     private val viewmodel by lazy {
         ViewModelProvider.NewInstanceFactory().create(FavoritesFragmentViewModel::class.java)
@@ -44,8 +50,14 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewmodel.filmsListLiveData.observe(viewLifecycleOwner) {
-            filmsDatabase = it.filter { it.isInFavourites }
+        scope = CoroutineScope(Dispatchers.IO).also { scope ->
+            scope.launch {
+                viewmodel.filmsListData.collect {
+                    withContext(Dispatchers.Main) {
+                        filmsDatabase = it.filter { it.isInFavourites }
+                    }
+                }
+            }
         }
 
         AnimationHelper.performFragmentCircularRevealAnimation(binding.root, requireActivity(), 2)
@@ -62,6 +74,11 @@ class FavoritesFragment : Fragment() {
             addItemDecoration(decorator)
         }
         filmsAdapter.addItems(filmsDatabase)
+    }
+
+    override fun onStop() {
+        super.onStop()
+        scope.cancel()
     }
 
     override fun onDestroy() {

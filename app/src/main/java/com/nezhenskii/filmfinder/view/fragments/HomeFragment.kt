@@ -18,6 +18,11 @@ import com.nezhenskii.filmfinder.databinding.FragmentHomeBinding
 import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.utils.AnimationHelper
 import com.nezhenskii.filmfinder.viewmodel.HomeFragmentViewModel
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.cancel
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 
 
@@ -26,6 +31,7 @@ class HomeFragment : Fragment() {
     private val binding: FragmentHomeBinding
         get() = _binding!!
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
+    private lateinit var scope: CoroutineScope
     private val viewmodel by lazy {
         ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java)
     }
@@ -37,6 +43,7 @@ class HomeFragment : Fragment() {
     }
 
     var isLoading = false
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -62,13 +69,25 @@ class HomeFragment : Fragment() {
         initPullToRefresh()
         initRecyclerView()
         initPreferencesListener()
-        viewmodel.filmsListLiveData.observe(viewLifecycleOwner) {
-            filmsDatabase = it
-            isLoading = false
+        scope = CoroutineScope(Dispatchers.IO).also { scope ->
+            scope.launch {
+                viewmodel.filmsListData.collect {
+                    withContext(Dispatchers.Main) {
+                        filmsDatabase = it
+                        isLoading = false
+                    }
+                }
+            }
         }
-        viewmodel.showProgressBar.observe(viewLifecycleOwner) {
-            binding.progressBar.isVisible = it
+
+        scope.launch {
+            for (element in viewmodel.showProgressBar) {
+                launch(Dispatchers.Main) {
+                    binding.progressBar.isVisible = element
+                }
+            }
         }
+
         viewmodel.errorEvent.observe(viewLifecycleOwner) {
             Toast.makeText(activity, it, Toast.LENGTH_SHORT).show()
         }
@@ -158,6 +177,11 @@ class HomeFragment : Fragment() {
             })
         }
 
+    }
+
+    override fun onStop() {
+        super.onStop()
+        scope.cancel()
     }
 
     override fun onDestroy() {
