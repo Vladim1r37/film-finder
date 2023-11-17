@@ -7,12 +7,14 @@ import com.nezhenskii.filmfinder.data.PreferenceProvider
 import com.nezhenskii.filmfinder.data.TmdbApi
 import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.data.entity.TmdbResultsDto
-import com.nezhenskii.filmfinder.utils.Converter
 import com.nezhenskii.filmfinder.viewmodel.HomeFragmentViewModel
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.asFlow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
@@ -41,11 +43,19 @@ class Interactor(
                     call: Call<TmdbResultsDto>,
                     response: Response<TmdbResultsDto>
                 ) {
-                    //При успехе мы вызываем метод, передаем onSuccess и в этот коллбэк список фильмов
-                    val list = Converter.convertApiListToDtoList(response.body()?.tmdbFilms)
+                    val list = response.body()?.tmdbFilms ?: listOf()
+                    val flow = list.asFlow().map {
+                        Film(
+                            title = it.title,
+                            poster = it.posterPath,
+                            description = it.overview,
+                            rating = it.voteAverage,
+                            isInFavourites = false
+                        )
+                    }
                     //Кладем фильмы в БД и выключаем ProgressBar
                     scope.launch {
-                        repo.putToDb(list)
+                        repo.putToDb(flow.toList())
                         progressBarState.send(false)
                         callback.onSuccess()
                     }
