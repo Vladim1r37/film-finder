@@ -16,5 +16,5 @@ data class Film(
     @ColumnInfo(name = "poster_path") val poster: String,
     @ColumnInfo(name = "overview") val description: String,
     @ColumnInfo(name = "vote_average") var rating: Double = 0.0,
-    var isInFavourites: Boolean = false
+    @ColumnInfo(name = "in_favorites") var isInFavourites: Boolean = false
 ) : Parcelable

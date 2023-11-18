@@ -3,7 +3,6 @@ package com.nezhenskii.filmfinder.view
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.widget.Toast
-import androidx.appcompat.app.AlertDialog
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import com.nezhenskii.filmfinder.R
@@ -97,21 +96,5 @@ class MainActivity : AppCompatActivity() {
             .replace(R.id.fragment_placeholder, fragment)
             .addToBackStack(null)
             .commit()
-    }
-
-    @Deprecated("Deprecated in Java")
-    override fun onBackPressed() {
-        if (supportFragmentManager.backStackEntryCount == 1) {
-            AlertDialog.Builder(this)
-                .setTitle("Вы хотите выйти?")
-                .setPositiveButton("Да") { _, _ ->
-                    super.onBackPressed()
-                    finish()
-                }
-                .setNegativeButton("Нет") { _, _ ->
-
-                }
-                .show()
-        } else super.onBackPressed()
     }
 }
