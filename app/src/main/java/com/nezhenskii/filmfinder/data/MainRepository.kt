@@ -2,7 +2,7 @@ package com.nezhenskii.filmfinder.data
 
 import com.nezhenskii.filmfinder.data.dao.FilmDao
 import com.nezhenskii.filmfinder.data.entity.Film
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
 import java.util.concurrent.Executors
 
 class MainRepository(private val filmDao: FilmDao) {
@@ -10,7 +10,7 @@ class MainRepository(private val filmDao: FilmDao) {
             filmDao.insertAll(films)
     }
 
-    fun getAllFromDb(): Flow<List<Film>> {
+    fun getAllFromDb(): Observable<List<Film>> {
         return filmDao.getCachedFilms()
     }
 

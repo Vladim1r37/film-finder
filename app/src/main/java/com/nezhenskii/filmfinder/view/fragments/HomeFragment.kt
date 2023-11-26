@@ -18,11 +18,9 @@ import com.nezhenskii.filmfinder.databinding.FragmentHomeBinding
 import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.utils.AnimationHelper
 import com.nezhenskii.filmfinder.viewmodel.HomeFragmentViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.*
 
 
@@ -31,7 +29,6 @@ class HomeFragment : Fragment() {
     private val binding: FragmentHomeBinding
         get() = _binding!!
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
-    private lateinit var scope: CoroutineScope
     private val viewmodel by lazy {
         ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java)
     }
@@ -43,6 +40,7 @@ class HomeFragment : Fragment() {
     }
 
     var isLoading = false
+    val compositeDisposable = CompositeDisposable()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -69,24 +67,22 @@ class HomeFragment : Fragment() {
         initPullToRefresh()
         initRecyclerView()
         initPreferencesListener()
-        scope = CoroutineScope(Dispatchers.IO).also { scope ->
-            scope.launch {
-                viewmodel.filmsListData.collect {
-                    withContext(Dispatchers.Main) {
+        val filmObserver = viewmodel.filmsListData
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
                         filmsDatabase = it
                         isLoading = false
-                    }
-                }
             }
-        }
+        compositeDisposable.add(filmObserver)
 
-        scope.launch {
-            for (element in viewmodel.showProgressBar) {
-                launch(Dispatchers.Main) {
-                    binding.progressBar.isVisible = element
-                }
+        val pbObserver = viewmodel.showProgressBar
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                binding.progressBar.isVisible = it
             }
-        }
+        compositeDisposable.add(pbObserver)
 
         viewmodel.errorEvent.observe(viewLifecycleOwner) {
             Toast.makeText(activity, it, Toast.LENGTH_SHORT).show()
@@ -179,13 +175,9 @@ class HomeFragment : Fragment() {
 
     }
 
-    override fun onStop() {
-        super.onStop()
-        scope.cancel()
-    }
-
     override fun onDestroy() {
         _binding = null
+        compositeDisposable.dispose()
         super.onDestroy()
     }
 }
