@@ -9,14 +9,14 @@ import androidx.lifecycle.ViewModel
 import com.nezhenskii.filmfinder.App
 import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.domain.Interactor
-import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.flow.Flow
+import io.reactivex.rxjava3.core.Observable
+import io.reactivex.rxjava3.subjects.BehaviorSubject
 import java.util.concurrent.atomic.AtomicBoolean
 import javax.inject.Inject
 
 class HomeFragmentViewModel : ViewModel() {
-    val filmsListData: Flow<List<Film>>
-    val showProgressBar: Channel<Boolean>
+    val filmsListData: Observable<List<Film>>
+    val showProgressBar: BehaviorSubject<Boolean>
     val errorEvent = SingleLiveEvent<String>()
     private var lastCallTime: Long
     var page = 1

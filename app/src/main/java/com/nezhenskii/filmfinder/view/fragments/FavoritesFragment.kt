@@ -14,19 +14,17 @@ import com.nezhenskii.filmfinder.databinding.FragmentFavouritesBinding
 import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.utils.AnimationHelper
 import com.nezhenskii.filmfinder.viewmodel.FavoritesFragmentViewModel
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.cancel
-import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.schedulers.Schedulers
 
 class FavoritesFragment : Fragment() {
     private var _binding: FragmentFavouritesBinding? = null
     private val binding: FragmentFavouritesBinding
-    get() = _binding!!
+        get() = _binding!!
 
     private lateinit var filmsAdapter: FilmListRecyclerAdapter
-    private lateinit var scope: CoroutineScope
+    private val compositeDisposable = CompositeDisposable()
 
     private val viewmodel by lazy {
         ViewModelProvider.NewInstanceFactory().create(FavoritesFragmentViewModel::class.java)
@@ -50,24 +48,24 @@ class FavoritesFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        scope = CoroutineScope(Dispatchers.IO).also { scope ->
-            scope.launch {
-                viewmodel.filmsListData.collect {
-                    withContext(Dispatchers.Main) {
-                        filmsDatabase = it.filter { it.isInFavourites }
-                    }
-                }
+        val filmObserver = viewmodel.filmsListData
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribe {
+                filmsDatabase = it.filter { it.isInFavourites }
+
             }
-        }
+        compositeDisposable.add(filmObserver)
 
         AnimationHelper.performFragmentCircularRevealAnimation(binding.root, requireActivity(), 2)
 
         binding.favoritesRecycler.apply {
-            filmsAdapter = FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
-                override fun click(film: Film) {
-                    (requireActivity() as MainActivity).launchDetailsFragment(film)
-                }
-            })
+            filmsAdapter =
+                FilmListRecyclerAdapter(object : FilmListRecyclerAdapter.OnItemClickListener {
+                    override fun click(film: Film) {
+                        (requireActivity() as MainActivity).launchDetailsFragment(film)
+                    }
+                })
             adapter = filmsAdapter
             layoutManager = LinearLayoutManager(requireContext())
             val decorator = TopSpacingItemDecoration(8)
@@ -76,13 +74,9 @@ class FavoritesFragment : Fragment() {
         filmsAdapter.addItems(filmsDatabase)
     }
 
-    override fun onStop() {
-        super.onStop()
-        scope.cancel()
-    }
-
     override fun onDestroy() {
         _binding = null
+        compositeDisposable.dispose()
         super.onDestroy()
     }
 }
