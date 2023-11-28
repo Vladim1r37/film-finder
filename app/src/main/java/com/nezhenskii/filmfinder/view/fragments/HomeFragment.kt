@@ -19,9 +19,12 @@ import com.nezhenskii.filmfinder.data.entity.Film
 import com.nezhenskii.filmfinder.utils.AnimationHelper
 import com.nezhenskii.filmfinder.viewmodel.HomeFragmentViewModel
 import io.reactivex.rxjava3.android.schedulers.AndroidSchedulers
+import io.reactivex.rxjava3.core.Observable
 import io.reactivex.rxjava3.disposables.CompositeDisposable
+import io.reactivex.rxjava3.kotlin.subscribeBy
 import io.reactivex.rxjava3.schedulers.Schedulers
 import java.util.*
+import java.util.concurrent.TimeUnit
 
 
 class HomeFragment : Fragment() {
@@ -33,14 +36,16 @@ class HomeFragment : Fragment() {
         ViewModelProvider.NewInstanceFactory().create(HomeFragmentViewModel::class.java)
     }
     private var filmsDatabase = listOf<Film>()
-    set(value) {
-        if (field == value) return
-        field = value
-        filmsAdapter.addItems(field)
-    }
+        set(value) {
+            if (field == value) return
+            field = value
+            filmsAdapter.addItems(field)
+        }
 
     var isLoading = false
-    val compositeDisposable = CompositeDisposable()
+
+    var isSearching = false
+    private val compositeDisposable = CompositeDisposable()
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,22 +72,22 @@ class HomeFragment : Fragment() {
         initPullToRefresh()
         initRecyclerView()
         initPreferencesListener()
-        val filmObserver = viewmodel.filmsListData
+        val filmDispose = viewmodel.filmsListData
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
-                        filmsDatabase = it
-                        isLoading = false
+                filmsDatabase = it
+                isLoading = false
             }
-        compositeDisposable.add(filmObserver)
+        compositeDisposable.add(filmDispose)
 
-        val pbObserver = viewmodel.showProgressBar
+        val pbDispose = viewmodel.showProgressBar
             .subscribeOn(Schedulers.io())
             .observeOn(AndroidSchedulers.mainThread())
             .subscribe {
                 binding.progressBar.isVisible = it
             }
-        compositeDisposable.add(pbObserver)
+        compositeDisposable.add(pbDispose)
 
         viewmodel.errorEvent.observe(viewLifecycleOwner) {
             Toast.makeText(activity, it, Toast.LENGTH_SHORT).show()
@@ -116,24 +121,54 @@ class HomeFragment : Fragment() {
         binding.searchView.setOnClickListener {
             binding.searchView.isIconified = false
         }
-        binding.searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?): Boolean {
-                return true
-            }
+        val searchDispose = Observable.create { subscriber ->
+            binding.searchView.setOnQueryTextListener(object :
+                SearchView.OnQueryTextListener {
+                override fun onQueryTextChange(newText: String): Boolean {
+                    if (newText != "") isSearching = true
+                    subscriber.onNext(newText)
+                    return false
+                }
 
-            override fun onQueryTextChange(newText: String): Boolean {
-                if (newText.isEmpty()) {
-                    filmsAdapter.addItems(filmsDatabase)
-                    return true
+                override fun onQueryTextSubmit(query: String): Boolean {
+                    subscriber.onNext(query)
+                    return false
                 }
-                val result = filmsDatabase.filter {
-                    it.title.lowercase(Locale.getDefault())
-                        .contains(newText.lowercase(Locale.getDefault()))
-                }
-                filmsAdapter.addItems(result)
-                return true
+            })
+        }
+            .subscribeOn(Schedulers.io())
+            .map {
+                it.lowercase(Locale.getDefault()).trim()
             }
-        })
+            .debounce(1200, TimeUnit.MILLISECONDS)
+            .filter {
+                if (it.isBlank() && isSearching && !isLoading) {
+                    isSearching = false
+                    viewmodel.clearDb()
+                    viewmodel.page = 1
+                    isLoading = true
+                    viewmodel.getFilms()
+                }
+                it.isNotBlank()
+            }
+            .flatMap {
+                viewmodel.getSearchResult(it)
+            }
+            .subscribeOn(Schedulers.io())
+            .observeOn(AndroidSchedulers.mainThread())
+            .subscribeBy(
+                onError = {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error during search query",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                },
+                onNext = {
+                    filmsAdapter.addItems(it)
+                }
+            )
+        compositeDisposable.add(searchDispose)
     }
 
     private fun initRecyclerView() {
@@ -158,11 +193,12 @@ class HomeFragment : Fragment() {
                     //сколько всего элементов
                     val totalItemCount: Int = layoutManager.itemCount
                     //какая позиция первого элемента
-                    val firstVisibleItem = (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
+                    val firstVisibleItem =
+                        (recyclerView.layoutManager as LinearLayoutManager).findFirstVisibleItemPosition()
                     //смещение для более плавной прокрутки
                     val offset = 3
                     //проверяем, идет загрузка или нет
-                    if (!isLoading) {
+                    if (!isLoading && totalItemCount > 0) {
                         if (visibleItemCount + firstVisibleItem + offset >= totalItemCount) {
                             //ставим флаг, что запрашиваем загрузку элементов
                             isLoading = true
@@ -171,6 +207,7 @@ class HomeFragment : Fragment() {
                     }
                 }
             })
+            filmsAdapter.addItems(filmsDatabase)
         }
 
     }
