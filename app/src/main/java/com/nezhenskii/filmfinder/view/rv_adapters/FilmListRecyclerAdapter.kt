@@ -45,9 +45,9 @@ class FilmListRecyclerAdapter(private val clickListener: OnItemClickListener) :
         return items
     }
 
-//    fun clearItems() {
-//        items.clear()
-//    }
+    fun clearItems() {
+        items.clear()
+    }
 
     interface OnItemClickListener {
         fun click(film: Film)

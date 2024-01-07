@@ -29,7 +29,7 @@ class Interactor(
         progressBarState.onNext(true)
         //Метод getDefaultCategoryFromPreferences() будет при запросе получать список из нужной нам
         //категории
-        retrofitService.getFilms(getDefaultCategoryFromPreferences(), API.KEY, "ru-RU", page)
+        retrofitService.getFilms(getDefaultCategoryFromPreferences(), API.KEY, "en-US", page)
             .enqueue(object : Callback<TmdbResultsDto> {
                 override fun onResponse(
                     call: Call<TmdbResultsDto>,
@@ -42,7 +42,7 @@ class Interactor(
                                 result.add(
                                     Film(
                                         title = it.title,
-                                        poster = it.posterPath,
+                                        poster = it.posterPath ?: "",
                                         description = it.overview,
                                         rating = it.voteAverage,
                                         isInFavourites = false
@@ -68,6 +68,25 @@ class Interactor(
                 }
             })
     }
+
+    fun getSearchResultFromApi(query: String): Observable<List<Film>> =
+        retrofitService.getFilmFromSearch(API.KEY, query, "en-US", 1)
+            .map { responce ->
+                val list = responce.tmdbFilms
+                val result = mutableListOf<Film>()
+                list.forEach {
+                    result.add(
+                        Film(
+                            title = it.title,
+                            poster = it.posterPath ?: "",
+                            description = it.overview,
+                            rating = it.voteAverage,
+                            isInFavourites = false
+                        )
+                    )
+                }
+                result.toList()
+            }
 
     fun getFilmsFromDb(): Observable<List<Film>> = repo.getAllFromDb()
 

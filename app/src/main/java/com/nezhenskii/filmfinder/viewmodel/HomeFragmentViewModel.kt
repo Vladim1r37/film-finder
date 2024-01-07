@@ -33,7 +33,6 @@ class HomeFragmentViewModel : ViewModel() {
         showProgressBar = interactor.progressBarState
         //Пятиминутная задержка между запросами в сеть, если данные были недавно кэшированы
         if (System.currentTimeMillis() - lastCallTime > timeout) {
-            interactor.saveLastCallTime(System.currentTimeMillis())
             getFilms()
         }
     }
@@ -52,6 +51,8 @@ class HomeFragmentViewModel : ViewModel() {
 
         })
     }
+
+    fun getSearchResult(query: String) = interactor.getSearchResultFromApi(query)
 
     fun clearDb() = interactor.clearDb()
 
